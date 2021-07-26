@@ -1,3 +1,6 @@
+# Parses test data inputs and writes plain text and span offset files
+# into data/preprocessed.
+
 import json
 import re
 from pathlib import Path
@@ -19,18 +22,15 @@ def main():
         for sentence in group_by_sentences(document):
             needs_space = False
 
+            sentence = skip_multi_word_tokens(sentence)
             for token in sentence:
-                fields = token.split('\t')
-
-                if '-' in fields[0]:
-                    # skip multiword tokens
-                    continue
+                features = token.split('\t')
 
                 if needs_space:
                     text.append(' ')
                     i += 1
 
-                word = fields[1]
+                word = features[1]
 
                 spans.append({
                     'token': word,
@@ -40,7 +40,7 @@ def main():
                 text.append(word)
                 i += len(word)
 
-                needs_space = 'SpaceAfter=No' not in fields[9]
+                needs_space = 'SpaceAfter=No' not in features[9]
 
             text.append('\n')
             i += 1
@@ -49,6 +49,24 @@ def main():
             outtxt.write(''.join(text))
         with open(outputdir / f'{doc_id}.spans', 'w') as outspans:
             outspans.write(json.dumps(spans, indent=2, ensure_ascii=False))
+
+
+def skip_multi_word_tokens(conllu_lines):
+    res = []
+    skip = []
+    for line in conllu_lines:
+        features = line.strip().split('\t')
+        tid = features[0]
+        token = features[1]
+        if '-' in tid:
+            start, end = tid.split('-')
+            skip = list(range(int(start), int(end) + 1))
+            res.append(line)
+        else:
+            if tid.isdigit() and int(tid) not in skip:
+                res.append(line)
+
+    return res
 
 
 def group_by_sentences(conllu_lines):
