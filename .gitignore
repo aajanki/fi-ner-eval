@@ -1,4 +1,6 @@
 /secrets.json
 /.venv/
+/.venv-keras-bert-ner/
 /data/preprocessed/
+/data/models/
 /ner_results/

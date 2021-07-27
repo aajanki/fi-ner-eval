@@ -1,0 +1,4 @@
+flask>=2.0.1,<2.1
+numpy>=1.18.5,<1.19.0
+keras-bert==0.88.0
+tensorflow==1.15.5
