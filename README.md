@@ -14,7 +14,8 @@ pip install -r requirements.txt
 git submodule update --init --recursive
 
 # Prepare data
-python eval/ud_to_documents.py
+python -m eval.ud_to_documents
+python -m eval.turku_one_extract_ud
 ```
 
 ### Azure Cognitive services text analytics NER

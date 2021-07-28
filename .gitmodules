@@ -4,3 +4,6 @@
 [submodule "keras-bert-ner"]
 	path = keras-bert-ner
 	url = https://github.com/spyysalo/keras-bert-ner.git
+[submodule "data/turku-one"]
+	path = data/turku-one
+	url = https://github.com/TurkuNLP/turku-one.git

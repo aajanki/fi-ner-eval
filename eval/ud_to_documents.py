@@ -1,5 +1,5 @@
 # Parses test data inputs and writes plain text and span offset files
-# into data/preprocessed.
+# into data/preprocessed/documents.
 
 import json
 import re
@@ -10,7 +10,7 @@ sent_id_re = re.compile(r'^#\s*sent_id\s*=\s*(.+)\.(\d+)')
 
 def main():
     infile = 'data/turku-ner-corpus/data/UD_Finnish-TDT/fi_tdt-ud-test.conllu'
-    outputdir = Path('data/preprocessed')
+    outputdir = Path('data/preprocessed/documents')
     outputdir.mkdir(parents=True, exist_ok=True)
     
     lines = open(infile).readlines()

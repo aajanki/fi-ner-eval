@@ -4,11 +4,11 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 from pathlib import Path
 from tqdm import tqdm
-from .data import load_documents_and_ground_truth, write_conllu_tokens
+from .data import load_documents_and_ground_truth, write_tsv3
 
 
 def main():
-    data_path = Path('data/preprocessed')
+    data_path = Path('data/preprocessed/documents')
     ground_truth_file = Path('data/turku-ner-corpus/data/conll/test.tsv')
     output_path = Path('ner_results')
 
@@ -29,7 +29,7 @@ def main():
             tokens = convert_response_to_conllu(response, parts, spans)
             tokens = append_ground_truth(tokens, ground_truth)
             features = as_conllu_features(tokens)
-            write_conllu_tokens(features, output_f)
+            write_tsv3(features, output_f)
 
 
 def load_secrets():

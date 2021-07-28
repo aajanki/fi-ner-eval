@@ -2,7 +2,7 @@ import json
 
 
 def load_documents_and_ground_truth(doc_dir, ground_truth_file):
-    documents = sorted(load_documents(doc_dir), key=lambda x: x['id'])
+    documents = load_documents(doc_dir)
     ground_truth_by_documents = load_ground_truth(ground_truth_file)
     ground_truth_by_documents = (align_ground_truth(a, b)
                                  for a, b in zip(ground_truth_by_documents, documents))
@@ -11,11 +11,15 @@ def load_documents_and_ground_truth(doc_dir, ground_truth_file):
 
 
 def load_documents(doc_dir):
-    for p_txt in doc_dir.glob('*.txt'):
+    for p_txt in sorted(doc_dir.glob('*.txt')):
         docid = p_txt.stem
         p_spans = p_txt.with_suffix('.spans')
         with p_txt.open() as f_txt, p_spans.open() as f_spans:
             yield {'id': docid, 'text': f_txt.read(), 'spans': json.load(f_spans)}
+
+
+def count_documents(doc_dir):
+    return len(list(doc_dir.glob('*.txt')))
 
 
 def load_ground_truth(path):
@@ -73,7 +77,13 @@ def align_ground_truth(ground_truth_document, input_document):
     return aligned
 
 
-def write_conllu_tokens(tokens, fp):
+def write_tsv2(tokens, fp):
+    fp.write('-DOCSTART-\tO\n')
+    for (text, entity) in tokens:
+        fp.write(f'{text}\t{entity}\n')
+
+
+def write_tsv3(tokens, fp):
     fp.write('-DOCSTART-\tO\tO\n')
     for (text, grount_truth_entity, predicted_entity) in tokens:
         fp.write(f'{text}\t{grount_truth_entity}\t{predicted_entity}\n')

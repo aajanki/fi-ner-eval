@@ -1,7 +1,8 @@
 import requests
+import sys
 from pathlib import Path
 from tqdm import tqdm
-from .data import load_documents_and_ground_truth, write_conllu_tokens
+from .data import load_documents, load_ground_truth, count_documents, write_tsv3
 
 
 def main():
@@ -9,23 +10,21 @@ def main():
 
     Saves the output in ner_results/turku.conllu"""
     
-    data_path = Path('data/preprocessed')
-    ground_truth_file = Path('data/turku-one/data/conll/test.tsv')
+    exit_if_not_connected()
+
+    doc_dir = Path('data/preprocessed/documents')
+    ground_truth_file = Path('data/preprocessed/turku-one/test.tsv')
     output_path = Path('ner_results/turku.conllu')
 
-    documents, ground_truth_by_documents = \
-        load_documents_and_ground_truth(data_path, ground_truth_file)
-
-    ground_truth_by_documents = list(ground_truth_by_documents)
+    documents = load_documents(doc_dir)
+    num_documents = count_documents(doc_dir)
+    ground_truth_by_documents = load_ground_truth(ground_truth_file)
     
     with open(output_path, 'w') as output_f:
-        for doc, ground_truth in tqdm(list(zip(documents, ground_truth_by_documents))):
+        for doc, ground_truth in tqdm(zip(documents, ground_truth_by_documents), total=num_documents):
             predicted = predict(doc['text'])
-            predicted = fix_predicted_tokenization(doc['id'], predicted)
-            predicted = to_narrow_entity_scheme(predicted)
-
             features = merge_ground_truth(doc['id'], predicted, ground_truth)
-            write_conllu_tokens(features, output_f)
+            write_tsv3(features, output_f)
 
 
 def predict(text):
@@ -43,57 +42,12 @@ def predict(text):
     return tokens
 
 
-def to_narrow_entity_scheme(tokens):
-    """Convert fine-grained OntoNotes entity labels (18 entities) into
-    coarse-grained labels (6 entities)."""
-
-    broad_to_narrow_labels = {
-        'B-PERSON': 'B-PER',
-        'I-PERSON': 'I-PER',
-        'B-GPE': 'B-LOC',
-        'I-GPE': 'I-LOC',
-        'B-FAC': 'B-LOC',
-        'I-FAC': 'I-LOC',
-        'B-PRODUCT': 'B-PRO',
-        'I-PRODUCT': 'I-PRO',
-        'B-WORK_OF_ART': 'B-PRO',
-        'I-WORK_OF_ART': 'I-PRO',
-        'B-NORP': 'O',
-        'I-NORP': 'O',
-        'B-LAW': 'O',
-        'I-LAW': 'O',
-        'B-LANGUAGE': 'O',
-        'I-LANGUAGE': 'O',
-        'B-TIME': 'O',
-        'I-TIME': 'O',
-        'B-PERCENT': 'O',
-        'I-PERCENT': 'O',
-        'B-MONEY': 'O',
-        'I-MONEY': 'O',
-        'B-QUANTITY': 'O',
-        'I-QUANTITY': 'O',
-        'B-ORDINAL': 'O',
-        'I-ORDINAL': 'O',
-        'B-CARDINAL': 'O',
-        'I-CARDINAL': 'O',
-    }
-
-    return [(t[0], broad_to_narrow_labels.get(t[1], t[1])) for t in tokens]
-
-
-def fix_predicted_tokenization(docid, tokens):
-    if docid == 't032':
-        # This isn't pretty... A special case for an incorrect
-        # tokenization to help with the sequence alignment.
-        fixed = []
-        for t in tokens:
-            if t[0] == 'täTaloussanomille':
-                fixed.append(['Taloussanomille', t[1]])
-            else:
-                fixed.append(t)
-        return fixed
-    else:
-        return tokens
+def exit_if_not_connected():
+    try:
+        predict('Suomi')
+    except requests.exceptions.ConnectionError:
+        print('Failed to connect to the turku-ner-model. Have you started it on port 8080?')
+        sys.exit(1)
 
 
 def align_with_ground_truth(docid, predicted, ground_truth, max_look_ahead=9):
