@@ -1,8 +1,15 @@
 # Evaluation of Finnish NER software
 
+Scripts for evaluating the precsion and recall of Finnish named entity
+recognition (NER) services/libraries.
+
+## Results
+
+TODO...
+
 ## Running the evaluations
 
-### Common setup
+### Shared setup
 
 ```
 python3 -m venv .venv
@@ -24,7 +31,7 @@ python -m eval.turku_one_extract_ud
 # Azure credentials
 cp secrets_template.json secrets.json
 
-# Deploy an Azure text analytics service and write endpoint and API key into secrets.json
+# Deploy an Azure text analytics service and write the endpoint and API key into secrets.json
 
 # Evaluate
 python -m eval.ner-azure
