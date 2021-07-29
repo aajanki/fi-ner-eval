@@ -57,7 +57,6 @@ def skip_multi_word_tokens(conllu_lines):
     for line in conllu_lines:
         features = line.strip().split('\t')
         tid = features[0]
-        token = features[1]
         if '-' in tid:
             start, end = tid.split('-')
             skip = list(range(int(start), int(end) + 1))
@@ -71,8 +70,6 @@ def skip_multi_word_tokens(conllu_lines):
 
 def group_by_sentences(conllu_lines):
     current_sentence = []
-    current_sent_id = None
-
     for line in conllu_lines:
         line = line.strip()
         sent_id_match = sent_id_re.match(line)

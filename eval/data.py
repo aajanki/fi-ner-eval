@@ -1,15 +1,6 @@
 import json
 
 
-def load_documents_and_ground_truth(doc_dir, ground_truth_file):
-    documents = load_documents(doc_dir)
-    ground_truth_by_documents = load_ground_truth(ground_truth_file)
-    ground_truth_by_documents = (align_ground_truth(a, b)
-                                 for a, b in zip(ground_truth_by_documents, documents))
-
-    return (documents, ground_truth_by_documents)
-
-
 def load_documents(doc_dir):
     for p_txt in sorted(doc_dir.glob('*.txt')):
         docid = p_txt.stem
@@ -42,39 +33,6 @@ def load_ground_truth(path):
 
     if current_document:
         yield current_document
-
-
-def align_ground_truth(ground_truth_document, input_document):
-    # The ground truth and the input data have some differences in
-    # tokenization. Some tokens in the input data contain whitespace,
-    # for example a smiley ": )" and phone numbers, while ground truth
-    # has split everything by space. Merge back split ground truth
-    # tokens.
-    i = 0
-    aligned = []
-    for token in input_document['spans']:
-        input_token = token['token']
-        if ' ' in input_token:
-            subtokens = input_token.split(' ')
-            fixed = [input_token] + ground_truth_document[i][1:]
-
-            skipped_gt_labels = [x[1] for x in ground_truth_document[i+1:i+len(subtokens)]]
-            if not all(x == 'O' for x in skipped_gt_labels):
-                print(f'WARNING: ignoring an entity label when aligning ground truth tokens '
-                      f'on document {input_document["id"]}.')
-                for x in ground_truth_document[i+1:i+len(subtokens)]:
-                    print(x)
-            
-            aligned.append(fixed)
-            i += len(subtokens)
-        else:
-            assert ground_truth_document[i][0] == input_token
-            
-            aligned.append(ground_truth_document[i])
-            i += 1
-
-    assert i == len(ground_truth_document)
-    return aligned
 
 
 def write_tsv2(tokens, fp):
