@@ -28,7 +28,7 @@ cp secrets_template.json secrets.json
 
 # Evaluate
 python -m eval.ner-azure
-python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/azure.conllu
+python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/azure.tsv
 ```
 
 ### Turku NER
@@ -53,5 +53,5 @@ Run in the main virtual environment in another terminal window:
 
 ```
 python -m eval.ner-turku
-python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/turku.conllu
+python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/turku.tsv
 ```

@@ -20,7 +20,7 @@ def main():
 
     doc_dir = Path('data/preprocessed/documents')
     ground_truth_file = Path('data/preprocessed/turku-one/test.tsv')
-    output_path = Path('ner_results')
+    output_path = Path('ner_results/azure.tsv')
 
     secrets = load_secrets()
     text_analytics_client = ner_client(secrets)
@@ -28,7 +28,7 @@ def main():
     documents = load_documents(doc_dir)
     num_documents = count_documents(doc_dir)
     ground_truth_by_documents = load_ground_truth(ground_truth_file)
-    with open(output_path / 'azure.conllu', 'w') as output_f:
+    with open(output_path, 'w') as output_f:
         for doc, ground_truth in tqdm(zip(documents, ground_truth_by_documents), total=num_documents):
             if args.cached_response:
                 response = predict_cached(doc)
