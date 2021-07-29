@@ -18,7 +18,7 @@ def main():
     ground_truth_file = Path('data/preprocessed/turku-one/test.tsv')
     output_path = Path('ner_results/turku.conllu')
 
-    documents = load_documents(doc_dir)
+    documents = load_documents(doc_dir, include_spans=False)
     num_documents = count_documents(doc_dir)
     ground_truth_by_documents = load_ground_truth(ground_truth_file)
     

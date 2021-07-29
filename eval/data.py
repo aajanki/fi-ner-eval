@@ -1,12 +1,16 @@
 import json
 
 
-def load_documents(doc_dir):
+def load_documents(doc_dir, include_spans=True):
     for p_txt in sorted(doc_dir.glob('*.txt')):
         docid = p_txt.stem
         p_spans = p_txt.with_suffix('.spans')
-        with p_txt.open() as f_txt, p_spans.open() as f_spans:
-            yield {'id': docid, 'text': f_txt.read(), 'spans': json.load(f_spans)}
+        if include_spans:
+            with p_txt.open() as f_txt, p_spans.open() as f_spans:
+                yield {'id': docid, 'text': f_txt.read(), 'spans': json.load(f_spans)}
+        else:
+            with p_txt.open() as f_txt:
+                yield {'id': docid, 'text': f_txt.read()}
 
 
 def count_documents(doc_dir):
