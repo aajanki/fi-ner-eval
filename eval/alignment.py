@@ -4,13 +4,15 @@ import logging
 def align_with_ground_truth(docid, predicted, ground_truth, max_look_ahead=9):
     """Align the predicted tokens with the ground truth tokens.
 
-    This is a greedy heuristic: whenever there is a mismatch, it
-    skips over tokens until the sequences match again. This happens
-    to work on the turku-ner-corpus test test but is no way general.
-    It might throw lots of exceptions on another data set with
-    different corner cases.
+    This is a greedy heuristic: whenever there is a mismatch, it skips
+    over tokens until the sequences match again. This happens to work
+    on the turku-one test test but is in no way general. It might
+    throw lots of exceptions on another data set with different corner
+    cases."""
 
-    A proper sequence alignment algorithm might be a good idea..."""
+    # A proper sequence alignment algorithm might be a good idea. I
+    # tried python-alignment but it ended up with too deep recursion
+    # (maybe it's not suitable for large vocabulary?).
 
     logging.debug(f'Aligning predicted with ground truth on document {docid}')
 
@@ -44,12 +46,14 @@ def align_with_ground_truth(docid, predicted, ground_truth, max_look_ahead=9):
 
         elif predicted[j][0].startswith(ground_truth[i][0]):
             # Let's assume the ground truth has multiple tokens
-            # corresponding to one predicted token and try to recover.
-            next_gt_tokens = [x[0] for x in ground_truth[i+2:i+max_look_ahead]]
-            if j >= len(predicted) - 1:
-                k = len(ground_truth) - i
-            else:
-                k = index_is_start_of(next_gt_tokens, predicted[j+1][0]) + 2
+            # corresponding to one predicted token.
+            k = consume_matches(predicted[j][0], [x[0] for x in ground_truth[i:]])
+            if k is None:
+                next_gt_tokens = [x[0] for x in ground_truth[i+2:i+max_look_ahead]]
+                if j >= len(predicted) - 1:
+                    k = len(ground_truth) - i
+                else:
+                    k = index_is_start_of(next_gt_tokens, predicted[j+1][0]) + 2
 
             predicted_label = predicted[j][1]
             continuation_label = continue_entity_label(predicted_label)
@@ -87,6 +91,22 @@ def align_with_ground_truth(docid, predicted, ground_truth, max_look_ahead=9):
     # idea except that the input prediction is often inconsistent.
 
     return aligned
+
+
+def consume_matches(text, seq):
+    i = 0
+    textpos = 0
+    while i < len(seq) and textpos < len(text):
+        if text[textpos:].startswith(seq[i]):
+            textpos += len(seq[i])
+            i += 1
+        else:
+            break
+
+    if textpos >= len(text) - 1:
+        return i
+    else:
+        return None
 
 
 def merge_ground_truth(docid, predicted, ground_truth):

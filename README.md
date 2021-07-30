@@ -19,6 +19,8 @@ pip install -r requirements.txt
 
 # Download datasets and models
 git submodule update --init --recursive
+wget --directory-prefix=tmp https://korp.csc.fi/download/finnish-tagtools/v1.3/finnish-tagtools-1.3.2.zip
+unzip tmp/finnish-tagtools-1.3.2.zip
 
 # Prepare data
 python -m eval.ud_to_documents
@@ -61,4 +63,11 @@ Run in the main virtual environment in another terminal window:
 ```
 python -m eval.ner-turku
 python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/turku.tsv
+```
+
+## FiNER
+
+```
+python -m eval.ner-finer
+python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/finer.tsv
 ```
