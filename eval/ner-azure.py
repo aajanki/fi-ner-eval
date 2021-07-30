@@ -17,6 +17,7 @@ def main():
 
     logging.basicConfig(format='%(levelname)s: %(message)s',
                         level=getattr(logging, args.loglevel.upper()))
+    logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.WARNING)
 
     doc_dir = Path('data/preprocessed/documents')
     ground_truth_file = Path('data/preprocessed/turku-one/test.tsv')
@@ -38,9 +39,6 @@ def main():
             # First, align entities with the input tokens using the
             # known offsets
             predicted = align_with_input(doc, response)
-
-            # This helps alignment with the turku-one ground truth
-            predicted = expand_ellipses(predicted)
 
             # Next, sequence align the input tokens with the ground
             # truth tokens
@@ -81,7 +79,7 @@ def predict(client, doc):
 
 def predict_cached(doc):
     response = []
-    for p in cache_dir.glob(f'{doc["id"]}*.json'):
+    for p in sorted(cache_dir.glob(f'{doc["id"]}*.json')):
         with p.open() as fp:
             response.append(json.load(fp=fp))
     return response
@@ -241,22 +239,6 @@ def merge_response_parts(response, parts):
         'id': response[0]['id'],
         'entities': merged_entities
     }
-
-
-def expand_ellipses(tokens):
-    """Replace "..." token with three "." tokens.
-   
-    Turku-one tokenizes ellipses as three periods. Re-tokenizing input
-    in the same way makes sequence alignment heuristic work better."""
-    res = []
-    for t in tokens:
-        if t[0] == '...':
-            res.append(('.', t[1]))
-            res.append(('.', t[1]))
-            res.append(('.', t[1]))
-        else:
-            res.append(t)
-    return res
 
 
 if __name__ == '__main__':
