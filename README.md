@@ -19,8 +19,8 @@ pip install -r requirements.txt
 
 # Download datasets and models
 git submodule update --init --recursive
-wget --directory-prefix=tmp https://korp.csc.fi/download/finnish-tagtools/v1.3/finnish-tagtools-1.3.2.zip
-unzip tmp/finnish-tagtools-1.3.2.zip
+wget --directory-prefix=/tmp https://korp.csc.fi/download/finnish-tagtools/v1.5/finnish-tagtools-1.5.1.zip
+unzip /tmp/finnish-tagtools-1.5.1.zip
 
 # Prepare data
 python -m eval.ud_to_documents

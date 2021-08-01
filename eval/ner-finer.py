@@ -37,7 +37,7 @@ def parse_args():
 
 def predict(text):
     p = subprocess.run('./finnish-nertag', input=text, text=True, capture_output=True,
-                       check=True, cwd='finnish-tagtools-1.3.2')
+                       check=True, cwd='finnish-tagtools-1.5.1')
     res = []
     active_chunk = None
     for line in p.stdout.split('\n'):
