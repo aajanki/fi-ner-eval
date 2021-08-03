@@ -37,7 +37,7 @@ cp secrets_template.json secrets.json
 
 # Evaluate
 python -m eval.ner-azure
-python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/azure.tsv
+python -m eval.conlleval --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/azure.tsv
 ```
 
 ### Turku NER
@@ -62,12 +62,20 @@ Run in the main virtual environment in another terminal window:
 
 ```
 python -m eval.ner-turku
-python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/turku.tsv
+python -m eval.conlleval --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/turku.tsv
 ```
 
-## FiNER
+### FiNER
 
 ```
 python -m eval.ner-finer
-python data/turku-ner-corpus/scripts/conlleval.py --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/finer.tsv
+python -m eval.conlleval --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/finer.tsv
+```
+
+### Result plots
+
+Run all evaluations first.
+
+```
+python -m eval.plot_results
 ```
