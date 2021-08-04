@@ -3,9 +3,7 @@
 Scripts for evaluating the precsion and recall of Finnish named entity
 recognition (NER) services/libraries.
 
-## Results
-
-TODO...
+See [the evaluation results](https://aajanki.github.io/fi-ner-eval/index.html)
 
 ## Running the evaluations
 
@@ -74,8 +72,22 @@ python -m eval.conlleval --boundary='-DOCSTART-' --delimiter=$'\t' ner_results/f
 
 ### Result plots
 
-Run all evaluations first.
+Run all the above evaluations first.
 
 ```
 python -m eval.plot_results
+```
+
+## Refreshing the report
+
+The Markdown source for the report is located at [docs-source](docs-source) and the generated HTML files at [docs](docs).
+
+Generating the report requires [pandoc-scholar](https://github.com/pandoc-scholar/pandoc-scholar).
+
+```
+cp ner_results/*png docs-source/images/ # If the result image have changed
+
+cd docs-source
+make
+git push  ## Updates the public web pages
 ```

@@ -1,3 +1,4 @@
+import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -6,13 +7,15 @@ from .conlleval import evaluate, metrics, parse_args
 
 
 def main():
+    matplotlib.rcParams.update({'font.size': 14})
+    
     df = load_ner_results()
 
     plot_precision_recall(df)
-    plt.savefig('ner_results/prec_rec.png')
+    plt.savefig('ner_results/prec_rec.png', dpi=72)
 
     plot_f1(df)
-    plt.savefig('ner_results/f1.png')
+    plt.savefig('ner_results/f1.png', dpi=72)
 
     print('Result plots saved as ner_results/prec_rec.png and ner_results/f1.png')
 
@@ -20,7 +23,7 @@ def main():
 
 
 def plot_precision_recall(df):
-    plt.figure(figsize=(8, 4.8))
+    plt.figure(figsize=(9, 4.8))
     score_order = ['Organization precision', 'Organization recall',
                    'Person precision', 'Person recall',
                    'GPE precision', 'GPE recall']
