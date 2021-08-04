@@ -50,7 +50,7 @@ The precision, recall and F1 scores are displayed on the plots below.
 ![Precision and recall values of the tested algorithms](images/prec_rec.png)
 ![F1 scores of the tested algorithms](images/f1.png)
 
-Turku NER attains the highest F1 scores with values above 90% on all NE types. FiNER can just about compete on GPE detection but loses clearly on the other two NE types. Azure NER's overall performance is poor with the terrible recall on organizations as its weak spot.
+Turku NER attains the highest F1 scores with values above 90% on all NE types. FiNER can just about compete on GPE detection but loses clearly on the other two NE types. Azure NER's overall performance is poor with the terrible recall on organizations as its weakest spot.
 
 ### Discussion of the results
 
@@ -70,7 +70,7 @@ The Turku NER interface is exposed as an (local) HTTP server. The text of a docu
 
 The keras-bert-ner pacakge is distributed under the MIT license. The license for the Turku NER model weights is not explicitly stated, but the researchers ask to cite their research paper if one uses the model.
 
-The Azure NER system is a component on the Microsoft Azure cloud computing service. It can be deployed through the Azure console or (on a more serious software engineering project) through an Azure DevOps pipeline deployment job. At the deployment stage you get an API key for accessing the cloud API. A client library for accessing the service exists for Python and several other popular programming languages. It is also possible the access the service through a REST API. The Azure NER client accepts the text as an input and outputs the detected entities and their text offsets. The input size is limited to rather low 5,120 characters. To process longer documents, it is necessary to write code for splitting the documents and re-combining the results (the client library doesn't do this automatically). The [service pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/text-analytics/) is based on the usage with costs of less than 1 € per 1,000 text records.
+The Azure NER system is a component on the Microsoft Azure cloud computing service. It can be deployed through the Azure console or (on a more serious software engineering project) through an Azure DevOps pipeline deployment job. At the deployment stage you get an API key for accessing the cloud API. A client library for accessing the service exists for Python and several other popular programming languages. It is also possible the access the service through a REST API. The Azure NER client accepts the text as an input and outputs the detected entities and their text offsets. The input size is limited to rather low 5,120 characters. To process longer documents, it is necessary to write code for splitting the documents and re-combining the results (the client library doesn't do this automatically). The [service pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/text-analytics/) is based on the usage. The price is less than 1 € per 1,000 text records.
 
 ## Conclusions
 
