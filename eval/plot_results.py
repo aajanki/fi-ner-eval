@@ -4,6 +4,9 @@ import pandas as pd
 import seaborn as sns
 from pathlib import Path
 from .conlleval import evaluate, metrics, parse_args
+from .functools import flat_map
+
+entity_plot_order = ['Product', 'Event', 'Organization', 'Person', 'GPE', 'Location']
 
 
 def main():
@@ -24,9 +27,7 @@ def main():
 
 def plot_precision_recall(df):
     plt.figure(figsize=(9, 4.8))
-    score_order = ['Organization precision', 'Organization recall',
-                   'Person precision', 'Person recall',
-                   'GPE precision', 'GPE recall']
+    score_order = flat_map(lambda x: [x + ' precision', x + ' recall'], entity_plot_order)
     paired_colors = sns.color_palette("Paired")
     palette = {measure: color
                for (measure, color) in zip(score_order, paired_colors)}
@@ -42,23 +43,21 @@ def plot_precision_recall(df):
 
 
 def plot_f1(df):
-    plt.figure(figsize=(6.4, 4.8))
+    plt.figure(figsize=(9, 4.8))
     df_f1 = df[df['measure'] == 'f1']
     paired_colors = sns.color_palette("Paired")
     palette_f1 = {
-        'Organization': paired_colors[1],
-        'Person': paired_colors[3],
-        'GPE': paired_colors[5],
+        entity: paired_colors[2*i + 1] for i, entity in enumerate(entity_plot_order)
     }
-    entity_order = ['Organization', 'Person', 'GPE']
     ax = sns.barplot(data=df_f1, x='service', y='score', hue='entity',
-                     hue_order=entity_order, palette=palette_f1)
+                     hue_order=entity_plot_order, palette=palette_f1)
     sns.despine()
-    ax.legend(title=None)
+    ax.legend(title=None, bbox_to_anchor=(1.02, 1), borderaxespad=0)
     plt.xlabel(None)
     plt.ylabel(None)
     plt.title('F1 score')
     plt.ylim([0, 1])
+    plt.tight_layout()
 
 
 def load_ner_results():
@@ -67,11 +66,14 @@ def load_ner_results():
         ('FiNER', 'finer.tsv'),
         ('Turku NER', 'turku.tsv')
     ]
-    interesting_types = ['PERSON', 'ORG', 'GPE']
+    interesting_types = ['PERSON', 'ORG', 'GPE', 'LOC', 'PRODUCT', 'EVENT']
     entity_name = {
         'PERSON': 'Person',
         'ORG': 'Organization',
-        'GPE': 'GPE'
+        'GPE': 'GPE',
+        'LOC': 'Location',
+        'PRODUCT': 'Product',
+        'EVENT': 'Event',
     }
 
     eval_args = parse_args(['--boundary=-DOCSTART-', '--delimiter=\t'])

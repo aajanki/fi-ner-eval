@@ -2,6 +2,7 @@ import re
 from itertools import islice
 from pathlib import Path
 from .data import load_documents, load_ground_truth, write_tsv2
+from .functools import flat_map
 
 
 def main():
@@ -93,13 +94,6 @@ def window(seq, n=2):
     for elem in it:
         result = result[1:] + (elem,)
         yield result
-
-
-def flat_map(f, xs):
-    ys = []
-    for x in xs:
-        ys.extend(f(x))
-    return ys
 
 
 if __name__ == '__main__':
