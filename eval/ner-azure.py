@@ -6,7 +6,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 from pathlib import Path
 from tqdm import tqdm
-from .alignment import align_with_ground_truth, merge_ground_truth
+from .alignment import merge_ground_truth
 from .data import load_documents, count_documents, load_ground_truth, write_tsv3
 
 cache_dir = Path('ner_results/azure/responses')

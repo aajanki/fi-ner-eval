@@ -3,7 +3,7 @@ import logging
 import subprocess
 from pathlib import Path
 from tqdm import tqdm
-from .alignment import align_with_ground_truth, merge_ground_truth
+from .alignment import merge_ground_truth
 from .data import load_documents, load_ground_truth, count_documents, write_tsv3
 
 
