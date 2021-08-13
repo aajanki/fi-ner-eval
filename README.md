@@ -78,6 +78,14 @@ Run all the above evaluations first.
 python -m eval.plot_results
 ```
 
+### Exploring incorrect predictions
+
+Print tokens with incorrect predictions in the finer results:
+
+```
+python -m eval.show_errors < ner_results/finer.tsv | less
+```
+
 ## Refreshing the report
 
 The Markdown source for the report is located at [docs-source](docs-source) and the generated HTML files at [docs](docs).
